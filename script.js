@@ -1,194 +1,181 @@
-/**
- * Executa todo o código JavaScript após o carregamento completo do DOM,
- * garantindo que todos os elementos HTML estejam disponíveis.
- */
 document.addEventListener('DOMContentLoaded', () => {
+    // ==========================================================================
+    // Navbar Scroll Effect
+    // ==========================================================================
+    const navbar = document.querySelector('.navbar');
+    
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    });
 
-    /**
-     * Configura a funcionalidade de acordeão para a seção de FAQ.
-     */
-    function setupFAQ() {
-        const faqQuestions = document.querySelectorAll('.faq-question');
-        if (!faqQuestions.length) return; // Não faz nada se não houver FAQ
+    // ==========================================================================
+    // Mobile Menu Toggle
+    // ==========================================================================
+    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+    const navLinks = document.querySelector('.nav-links');
+    
+    if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            const icon = mobileMenuBtn.querySelector('i');
+            if (navLinks.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+    }
 
-        faqQuestions.forEach(question => {
-            question.addEventListener('click', () => {
-                const item = question.parentNode;
-                const answer = item.querySelector('.faq-answer');
+    // Close mobile menu when clicking a link
+    const links = document.querySelectorAll('.nav-links a');
+    links.forEach(link => {
+        link.addEventListener('click', () => {
+            navLinks.classList.remove('active');
+            const icon = mobileMenuBtn.querySelector('i');
+            icon.classList.remove('fa-times');
+            icon.classList.add('fa-bars');
+        });
+    });
+
+    // ==========================================================================
+    // Scroll Reveal Animations
+    // ==========================================================================
+    const revealElements = document.querySelectorAll('.fade-in, .reveal-up, .reveal-left, .reveal-right');
+    
+    const revealOptions = {
+        threshold: 0.15,
+        rootMargin: "0px 0px -50px 0px"
+    };
+    
+    const revealObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+                observer.unobserve(entry.target); // Stop observing once revealed
+            }
+        });
+    }, revealOptions);
+    
+    revealElements.forEach(element => {
+        revealObserver.observe(element);
+    });
+
+    // Trigger animations for elements already in viewport on load
+    setTimeout(() => {
+        const heroElements = document.querySelectorAll('.hero .fade-in');
+        heroElements.forEach((el, index) => {
+            setTimeout(() => {
+                el.classList.add('active');
+            }, index * 200); // Stagger effect
+        });
+    }, 100);
+
+    // ==========================================================================
+    // Particle Canvas Animation
+    // ==========================================================================
+    initParticleCanvas();
+});
+
+function initParticleCanvas() {
+    const canvas = document.getElementById('particle-canvas');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    let width, height, particles;
+    
+    // Brand Colors for particles
+    const colors = [
+        'rgba(214, 222, 237, 0.6)', // Azul Claro (#d6deed)
+        'rgba(250, 165, 54, 0.6)',  // Laranja (#faa536)
+        'rgba(255, 255, 255, 0.4)'  // Branco
+    ];
+
+    function resize() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+    }
+    
+    class Particle {
+        constructor() {
+            this.x = Math.random() * width;
+            this.y = Math.random() * height;
+            this.vx = (Math.random() - 0.5) * 0.5;
+            this.vy = (Math.random() - 0.5) * 0.5;
+            this.radius = Math.random() * 2 + 0.5;
+            this.color = colors[Math.floor(Math.random() * colors.length)];
+        }
+        
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            
+            // Bounce off edges
+            if (this.x < 0 || this.x > width) this.vx = -this.vx;
+            if (this.y < 0 || this.y > height) this.vy = -this.vy;
+        }
+        
+        draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            ctx.fillStyle = this.color;
+            ctx.fill();
+        }
+    }
+    
+    function init() {
+        resize();
+        particles = [];
+        // Calculate particle count based on screen size (prevent lag on mobile)
+        const particleCount = Math.min(Math.floor((width * height) / 10000), 100);
+        
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+    }
+    
+    function drawConnections() {
+        for (let i = 0; i < particles.length; i++) {
+            for (let j = i + 1; j < particles.length; j++) {
+                const dx = particles[i].x - particles[j].x;
+                const dy = particles[i].y - particles[j].y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
                 
-                item.classList.toggle('active');
-
-                if (item.classList.contains('active')) {
-                    answer.style.maxHeight = answer.scrollHeight + "px";
-                } else {
-                    answer.style.maxHeight = 0;
+                if (distance < 150) {
+                    // Line opacity based on distance
+                    const opacity = 1 - (distance / 150);
+                    // Mix colors or use a faint cyan
+                    ctx.beginPath();
+                    ctx.moveTo(particles[i].x, particles[i].y);
+                    ctx.lineTo(particles[j].x, particles[j].y);
+                    ctx.strokeStyle = `rgba(214, 222, 237, ${opacity * 0.15})`;
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
                 }
-            });
-        });
-    }
-
-    /**
-     * Configura o menu de navegação móvel (hamburger).
-     */
-    function setupMobileMenu() {
-        const hamburger = document.querySelector('.menu-hamburger');
-        const navMenu = document.querySelector('.nav-menu');
-        if (!hamburger || !navMenu) return;
-
-        hamburger.addEventListener('click', () => {
-            hamburger.classList.toggle('active');
-            navMenu.classList.toggle('active');
-            const isExpanded = navMenu.classList.contains('active');
-            hamburger.setAttribute('aria-expanded', isExpanded);
-            
-            // Bloqueia ou libera a rolagem da página quando o menu abre/fecha
-            document.body.style.overflow = isExpanded ? 'hidden' : '';
-        });
-
-        // Opcional: Fechar o menu ao clicar em um link
-        const navLinks = document.querySelectorAll('.nav-list li a');
-        navLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                if (navMenu.classList.contains('active')) {
-                    hamburger.classList.remove('active');
-                    navMenu.classList.remove('active');
-                    hamburger.setAttribute('aria-expanded', 'false');
-                    document.body.style.overflow = ''; // Libera a rolagem
-                }
-            });
-        });
-    }
-
-    /**
-     * Configura a animação de "revelar ao rolar" para elementos na página.
-     * Usa a API IntersectionObserver para performance.
-     */
-    function setupScrollReveal() {
-        const revealElements = document.querySelectorAll('.reveal-on-scroll');
-        if (!revealElements.length) return;
-
-        const revealObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('is-visible');
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, {
-            threshold: 0.1 // A animação dispara quando 10% do elemento estiver visível
-        });
-
-        revealElements.forEach(element => {
-            revealObserver.observe(element);
-        });
-    }
-
-    /**
-     * Inicializa o carrossel de depoimentos usando a biblioteca Swiper.js.
-     */
-    function initSwiper() {
-        if (typeof Swiper === 'undefined') return; // Não executa se a biblioteca não carregou
-
-        new Swiper('.testimonial-swiper', {
-            loop: true,             // Cria um loop infinito de slides.
-            slidesPerView: 1,       // Começa com 1 slide visível no celular.
-            spaceBetween: 20,       // Espaço de 20px entre os slides.
-            grabCursor: true,       // Mostra um ícone de "mão" ao passar o mouse.
-            pagination: {
-              el: '.swiper-pagination',
-              clickable: true,      // Permite clicar nas bolinhas para navegar.
-            },
-            navigation: {
-              nextEl: '.swiper-button-next',
-              prevEl: '.swiper-button-prev',
-            },
-            breakpoints: {
-              768: { slidesPerView: 2, spaceBetween: 30 }, // 2 slides para tablets.
-              1024: { slidesPerView: 3, spaceBetween: 30 }, // 3 slides para desktops.
-            }
-        });
-    }
-
-    /**
-     * Configura o botão de pausa/play do marquee de serviços.
-     */
-    function setupMarqueeControl() {
-        const toggleBtn = document.getElementById('marquee-toggle');
-        const marqueeContent = document.querySelector('.marquee-content');
-        
-        if (!toggleBtn || !marqueeContent) return;
-
-        // Ícones SVG para Play e Pause
-        const pauseIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>';
-        const playIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>';
-
-        toggleBtn.addEventListener('click', () => {
-            const isPaused = marqueeContent.classList.toggle('paused');
-            
-            if (isPaused) {
-                toggleBtn.innerHTML = playIcon;
-                toggleBtn.setAttribute('aria-label', 'Reproduzir animação');
-            } else {
-                toggleBtn.innerHTML = pauseIcon;
-                toggleBtn.setAttribute('aria-label', 'Pausar animação');
-            }
-        });
-    }
-
-    /**
-     * Monitora a rolagem para evitar que o botão do WhatsApp cubra o rodapé.
-     */
-    function setupWhatsAppScroll() {
-        const footer = document.querySelector('footer');
-        const whatsappBtn = document.querySelector('.whatsapp-float');
-        
-        if (!footer || !whatsappBtn) return;
-
-        function checkScroll() {
-            const scrollY = window.scrollY || window.pageYOffset;
-            const windowHeight = window.innerHeight;
-            const docHeight = document.documentElement.scrollHeight;
-            const footerHeight = footer.offsetHeight;
-            
-            const distanceToBottom = docHeight - (scrollY + windowHeight);
-
-            // Troca para absoluto exatamente quando o rodapé tocaria o botão
-            if (distanceToBottom <= footerHeight) {
-                whatsappBtn.style.position = 'absolute';
-                whatsappBtn.style.bottom = (footerHeight + 20) + 'px';
-            } else {
-                whatsappBtn.style.position = 'fixed';
-                whatsappBtn.style.bottom = '20px';
             }
         }
-
-        window.addEventListener('scroll', checkScroll);
-        window.addEventListener('resize', checkScroll);
-        checkScroll(); // Chama no início para ajustar se já estiver no fim
     }
-
-    /**
-     * Adiciona efeito de transparência ao cabeçalho ao rolar a página.
-     */
-    function setupHeaderScrollEffect() {
-        const header = document.querySelector('.header');
-        if (!header) return;
-
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
-            }
-        });
+    
+    function animate() {
+        ctx.clearRect(0, 0, width, height);
+        
+        for (let i = 0; i < particles.length; i++) {
+            particles[i].update();
+            particles[i].draw();
+        }
+        
+        drawConnections();
+        requestAnimationFrame(animate);
     }
-
-    // Chama todas as funções de inicialização
-    setupFAQ();
-    setupMobileMenu();
-    setupScrollReveal();
-    initSwiper();
-    setupMarqueeControl();
-    setupWhatsAppScroll();
-    setupHeaderScrollEffect();
-});
+    
+    window.addEventListener('resize', init);
+    init();
+    animate();
+}
