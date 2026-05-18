@@ -1,17 +1,41 @@
-/* --- Variáveis de Cores --- */
-
+/* ==========================================================================
+   CSS Variables & Theme
+   Brand Colors: Dark Blue, Light Blue, Yellow/Gold, White
+   ========================================================================== */
 :root {
-    --primary-color: #7E66AF; /* Lavanda (Suavidade/Espiritualidade) */
-    --primary-dark: #5E4B85;  /* Lavanda Escuro para hover */
-    --accent-color: #7E66AF;  /* Lavanda (Substituindo o Rosa para manter o tom monocromático) */
-    --bg-light: #fbfaff;      /* Off-white com leve toque de lavanda para harmonizar */
-    --text-color: #4A4A4A;    /* Cinza Escuro Suave */
-    --text-light: #666666;
-    --white: #FFFFFF;
+    /* Brand Colors */
+    --color-dark-base: #030712;
+    /* Fundo extremamente escuro */
+    --color-dark-surface: #0c1a31;
+    /* Azul Escuro da logo para cards */
+    --color-primary: #d6deed;
+    /* Azul Claro da logo */
+    --color-secondary: #faa536;
+    /* Laranja da logo */
+    --color-text-main: #F8FAFC;
+    /* White */
+    --color-text-muted: #b6bccb;
+    /* Slate grayish blue */
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, var(--color-primary), #113f7f);
+    --gradient-gold: linear-gradient(135deg, var(--color-secondary), #d97706);
+    --gradient-glass: linear-gradient(135deg, rgba(17, 63, 127, 0.15), rgba(12, 26, 49, 0.05));
+
+    /* Effects */
+    --glow-primary: 0 0 20px rgba(214, 222, 237, 0.5);
+    --glow-secondary: 0 0 20px rgba(250, 165, 54, 0.5);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+    --glass-blur: blur(12px);
+
+    /* Typography */
+    --font-heading: 'Outfit', sans-serif;
+    --font-body: 'Inter', sans-serif;
 }
 
-/* --- Reset Básico --- */
-
+/* ==========================================================================
+   Reset & Base Styles
+   ========================================================================== */
 * {
     margin: 0;
     padding: 0;
@@ -20,850 +44,764 @@
 
 html {
     scroll-behavior: smooth;
-    /* SOLUÇÃO: Garante que, ao clicar em um link âncora (ex: #sobre), o topo da seção não
-       fique escondido atrás do cabeçalho fixo. O valor deve ser a altura do header (70px). */
-    scroll-padding-top: 70px;
 }
 
 body {
-    font-family: 'Lato', sans-serif;
-    color: var(--text-color);
-    background-color: var(--bg-light);
+    font-family: var(--font-body);
+    background-color: var(--color-dark-base);
+    color: var(--color-text-main);
     line-height: 1.6;
-    position: relative; /* Necessário para o botão parar no final da página */
-    padding-top: 70px; /* Compensa o cabeçalho fixo para não esconder conteúdo */
+    overflow-x: hidden;
 }
 
-h1, h2, h3, .logo {
-    font-family: 'Playfair Display', serif; /* Fonte serifada para elegância */
-    color: var(--primary-dark);
+/* Canvas Background */
+#particle-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    pointer-events: none;
 }
 
-a {
-    text-decoration: none;
-    color: inherit;
-    transition: 0.3s;
-}
-
-ul { list-style: none; }
-
-.mobile-break { display: none; } /* Esconde a quebra de linha no desktop */
-
+/* Container */
 .container {
-    max-width: 1100px;
+    width: 100%;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0 24px;
 }
 
-.section-padding { 
-    padding: 50px 0;
+.section {
+    padding: 100px 0;
+    position: relative;
+    z-index: 1;
 }
 
-/* --- Classes para Botões --- */
+/* Typography Utilities */
+h1,
+h2,
+h3,
+h4,
+.logo-text {
+    font-family: var(--font-heading);
+    font-weight: 800;
+}
+
+.text-gradient {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.text-glow {
+    color: var(--color-primary);
+    text-shadow: var(--glow-primary);
+}
+
+.section-title {
+    font-size: 2.5rem;
+    margin-bottom: 24px;
+}
+
+.section-title span {
+    color: var(--color-primary);
+}
+
+/* ==========================================================================
+   Components
+   ========================================================================== */
+/* Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 32px;
+    border-radius: 8px;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+    font-size: 1rem;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
 
 .btn-primary {
-    display: inline-block;
-    background-color: var(--primary-color);
-    color: var(--white);
-    padding: 12px 30px;
-    border-radius: 5px;
-    font-weight: bold;
-    border: none;
-    cursor: pointer;
+    background: var(--gradient-gold);
+    color: var(--color-dark-base);
+    box-shadow: var(--glow-secondary);
+}
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #d97706, var(--color-secondary));
+    z-index: -1;
+    transition: opacity 0.3s ease;
+    opacity: 0;
+}
+
+.btn-primary:hover::before {
+    opacity: 1;
 }
 
 .btn-primary:hover {
-    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 0 30px rgba(250, 165, 54, 0.8);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--color-text-main);
+    border: 1px solid var(--color-primary);
+}
+
+.btn-secondary:hover {
+    background: rgba(214, 222, 237, 0.1);
+    box-shadow: var(--glow-primary);
     transform: translateY(-2px);
 }
 
-/* --- Menu de Opções --- */
-
-.header {
-    background-color: var(--white);
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    position: fixed; /* Muda de sticky para fixed para evitar redimensionamento no mobile */
-    width: 100%; /* Garante largura total */
-    top: 0;
-    z-index: 1000;
-    /* Animação para entrada suave e para mascarar o carregamento da fonte */
-    animation: fadeIn 1.5s ease-out;
-    animation-fill-mode: both;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Remove 'all' para evitar bugs de resize */
+/* Glass Panels */
+.glass-panel {
+    background: var(--gradient-glass);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: var(--glass-border);
+    border-radius: 16px;
+    padding: 32px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Classe adicionada via JS ao rolar a página */
-.header.scrolled {
-    background-color: rgba(255, 255, 255, 0.9); /* Branco com leve transparência */
-    -webkit-backdrop-filter: blur(5px); /* Suporte essencial para Safari/iPhone */
-    backdrop-filter: blur(5px); /* Efeito de desfoque no fundo (vidro fosco) */
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Sombra um pouco mais marcada */
+/* ==========================================================================
+   Navigation
+   ========================================================================== */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px 0;
+    z-index: 100;
+    transition: all 0.3s ease;
+}
+
+.navbar.scrolled {
+    background: rgba(12, 26, 49, 0.85); /* Azul Escuro da logo */
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(214, 222, 237, 0.05); /* Azul claro da logo */
+    padding: 15px 0;
 }
 
 .nav-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 70px;
 }
 
 .logo {
-    font-size: 1.7rem;
-    font-weight: 700; /* O peso da fonte já é herdado de h1, h2, h3, .logo, mas é bom manter para clareza */
+    text-decoration: none;
     display: flex;
     align-items: center;
-    gap: 10px; /* Espaço entre a imagem e o texto */
 }
 
-.logo img {
-    height: 40px; /* Altura ajustada para caber no header de 70px */
+.logo-img {
+    height: 45px;
     width: auto;
+    display: block;
+    transition: transform 0.3s ease, filter 0.3s ease;
 }
 
-nav ul { display: flex; gap: 25px; align-items: center; }
-nav a:hover { color: var(--primary-color); }
+.logo:hover .logo-img {
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 10px rgba(214, 222, 237, 0.6));
+}
+
+.footer-logo-img {
+    height: 40px;
+    width: auto;
+    display: block;
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 32px;
+    align-items: center;
+}
+
+.nav-links a {
+    color: var(--color-text-main);
+    text-decoration: none;
+    font-family: var(--font-heading);
+    font-weight: 400;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+    position: relative;
+}
+
+.nav-links a:not(.btn-nav):hover {
+    color: var(--color-primary);
+}
+
+.nav-links a:not(.btn-nav)::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0%;
+    height: 2px;
+    background: var(--color-primary);
+    transition: width 0.3s ease;
+    box-shadow: var(--glow-primary);
+}
+
+.nav-links a:not(.btn-nav):hover::after {
+    width: 100%;
+}
 
 .btn-nav {
-    border: 1px solid var(--primary-color);
+    border: 1px solid var(--color-secondary);
     padding: 8px 20px;
-    border-radius: 20px;
-    color: var(--primary-color);
+    border-radius: 6px;
+    color: var(--color-secondary) !important;
 }
 
 .btn-nav:hover {
-    background-color: var(--primary-color);
-    color: var(--white);
+    background: rgba(250, 165, 54, 0.1);
+    box-shadow: var(--glow-secondary);
 }
 
-/* --- Banner Principal --- */
+.mobile-menu-btn {
+    display: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--color-primary);
+}
 
+/* ==========================================================================
+   Hero Section
+   ========================================================================== */
 .hero {
-    background: linear-gradient(rgba(255,255,255,0.8), rgba(255,255,255,0.8)), url('img/banner_principal.png'); 
-    /* Imagem de fundo genérica de natureza/calma */
-    background-size: cover;
-    background-position: center;
-    height: calc(100vh - 70px); /* Ajusta altura para descontar o cabeçalho */
+    height: 100vh;
     display: flex;
     align-items: center;
+    justify-content: center;
     text-align: center;
+    position: relative;
+    z-index: 1;
 }
 
 .hero-content {
-    max-width: 700px;
-    margin: 0 auto;
+    max-width: 1000px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+}
+
+.badge {
+    display: inline-block;
+    padding: 8px 20px;
+    background: rgba(214, 222, 237, 0.15);
+    border: 1px solid rgba(214, 222, 237, 0.4);
+    border-radius: 30px;
+    color: var(--color-primary);
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
 }
 
 .hero h1 {
-    font-size: 3.5rem;
-    margin-bottom: 20px;
+    font-size: 4.8rem;
+    line-height: 1.2;
+    margin-bottom: 32px;
+}
+
+.hero-br {
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .hero-br {
+        display: none;
+    }
 }
 
 .hero p {
-    font-size: 1.2rem;
-    margin-bottom: 30px;
-    color: var(--text-light);
+    font-size: 1.25rem;
+    color: var(--color-text-muted);
+    max-width: 600px;
 }
 
-/* --- Animação em cascata para o Hero --- */
-.hero-content .reveal-on-scroll {
-    transition-delay: 0s; /* Delay padrão para o H1 */
-    transform: none; /* Remove o efeito de subida APENAS no hero para evitar o "salto" */
+.hero-buttons {
+    display: flex;
+    gap: 20px;
+    margin-top: 24px;
 }
-.hero-content .reveal-on-scroll:nth-child(2) { transition-delay: 0.2s; } /* Delay para o parágrafo */
-.hero-content .reveal-on-scroll:nth-child(3) { transition-delay: 0.4s; } /* Delay para o botão */
 
-/* --- Sobre Mim --- */
+.hero-buttons .btn {
+    padding: 16px 36px;
+    font-size: 1.1rem;
+}
 
+/* Mouse Scroll Indicator */
+.scroll-indicator {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.mouse {
+    width: 26px;
+    height: 40px;
+    border: 2px solid var(--color-text-muted);
+    border-radius: 20px;
+    position: relative;
+}
+
+.mouse::before {
+    content: '';
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 8px;
+    background: var(--color-primary);
+    border-radius: 2px;
+    animation: scroll 2s infinite;
+}
+
+@keyframes scroll {
+    0% {
+        transform: translate(-50%, 0);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(-50%, 15px);
+        opacity: 0;
+    }
+}
+
+/* ==========================================================================
+   About Section
+   ========================================================================== */
 .about-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 50px;
+    gap: 60px;
     align-items: center;
 }
 
-.about-image img {
-    width: 100%;
-    border-radius: 10px;
-    box-shadow: 10px 10px 0px var(--accent-color);
-}
-
-.about-text h2 {
+.about-text p {
+    color: var(--color-text-muted);
     margin-bottom: 20px;
-    font-size: 2.5rem;
+    font-size: 1.1rem;
 }
 
-.credentials li {
-    margin-top: 10px;
-    color: var(--primary-dark);
-    margin-left: 20px;
+.about-features {
+    list-style: none;
+    margin-top: 30px;
 }
 
-.credentials-li-3 {
-    margin-bottom: 10px;
-}
-
-
-
-/* --- Como Posso te Ajudar? (Serviços) --- */
-
-                /* Container que segura o conteúdo no meio da tela */
-.container_services {
-    max-width: 1100px; /* Limita a largura. Se quiser mais estreito, mude para 1000px */
-    margin: 0 auto;    /* Centraliza o bloco na tela */
-    padding: 0 20px;   /* Garante que não encoste nas bordas no celular */
-}
-
-.card {
-    background: var(--white); /* Fundo branco para destacar do site */
-    padding: 40px 30px;
-    border-radius: 12px;
-    text-align: center;
-    transition: all 0.4s ease; /* Transição suave para tudo */
-    border: 1px solid #f0f0f0; /* Borda cinza muito sutil */
-    position: relative;
-    top: 0;
-    
-    /* Flexbox para alinhar tudo perfeitamente */
+.about-features li {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    height: 100%;
+    gap: 12px;
+    margin-bottom: 16px;
+    font-size: 1.1rem;
 }
 
-/* O Efeito de "Flutuar" ao passar o mouse */
-.card:hover {
-    top: -10px; /* Sobe 10 pixels */
-    box-shadow: 0 15px 30px rgba(126, 102, 175, 0.15); /* Sombra lavanda suave */
-    border-color: var(--primary-color); /* Borda fica verde */
+.about-features i {
+    color: var(--color-secondary);
+    font-size: 1.2rem;
+    text-shadow: 0 0 10px rgba(250, 165, 54, 0.4);
 }
 
-/* O Ícone e seu Círculo */
-.service-icon {
-    width: 70px;
-    height: 70px;
-    background-color: var(--bg-light); /* Círculo bege claro */
+.main-glass-card {
+    background: var(--gradient-glass);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(214, 222, 237, 0.2);
+    border-radius: 24px;
+    padding: 50px;
+    text-align: center;
+    position: relative;
+    transform: perspective(1000px) rotateY(-5deg) rotateX(5deg);
+    transition: transform 0.5s ease;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.main-glass-card:hover {
+    transform: perspective(1000px) rotateY(0deg) rotateX(0deg);
+}
+
+.glass-icon {
+    width: 80px;
+    height: 80px;
+    background: rgba(214, 222, 237, 0.1);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 25px;
-    color: var(--primary-dark);
-    transition: 0.4s;
+    margin: 0 auto 24px;
+    font-size: 2rem;
+    color: var(--color-primary);
+    border: 1px solid rgba(214, 222, 237, 0.3);
+    box-shadow: var(--glow-primary);
 }
 
-/* Quando passa o mouse no card, o ícone muda de cor */
-.card:hover .service-icon {
-    background-color: var(--primary-color);
-    color: var(--white);
-    transform: rotateY(180deg); /* Um charme extra: o ícone gira */
+.main-glass-card h3 {
+    font-size: 1.8rem;
+    margin-bottom: 16px;
 }
 
-.card h3 {
-    margin-bottom: 15px;
-    color: var(--primary-dark);
-    font-family: 'Playfair Display', serif;
+.main-glass-card p {
+    color: var(--color-text-muted);
+}
+
+.card-glow-effect {
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 150px;
+    height: 150px;
+    background: var(--color-primary);
+    filter: blur(80px);
+    opacity: 0.3;
+    z-index: -1;
+    border-radius: 50%;
+}
+
+/* ==========================================================================
+   Services Section
+   ========================================================================== */
+.section-header {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto 60px;
+}
+
+.section-header p {
+    color: var(--color-text-muted);
+    font-size: 1.1rem;
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.service-card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    height: 100%;
+}
+
+.service-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.service-icon {
+    font-size: 2.5rem;
+    color: var(--color-secondary);
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
+}
+
+.service-card:hover .service-icon {
+    color: var(--color-primary);
+    text-shadow: var(--glow-primary);
+}
+
+.service-card h3 {
     font-size: 1.4rem;
 }
 
-.card p {
-    font-size: 1rem;
-    color: var(--text-light);
-    line-height: 1.7;
+.service-card p {
+    color: var(--color-text-muted);
+    flex-grow: 1;
 }
 
-/* --- Estilos para o Marquee de Serviços (CSS Puro) --- */
-.marquee-container {
-    overflow: hidden;
-    position: relative;
+.card-border {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0%;
+    height: 2px;
+    background: var(--color-primary);
+    transition: width 0.4s ease;
+    box-shadow: var(--glow-primary);
+}
+
+.service-card:hover .card-border {
     width: 100%;
-    /* Efeito de fade nas laterais para um acabamento mais profissional */
-    -webkit-mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent);
-    mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent);
 }
 
-.marquee-content {
-    display: flex;
-    width: fit-content; /* A largura se ajusta ao conteúdo total (original + duplicado) */
-    animation: marquee 30s linear infinite;
-}
-
-/* Pausa a animação quando o mouse está sobre o container */
-.marquee-container:hover .marquee-content {
-    animation-play-state: paused;
-}
-
-/* A animação do marquee */
-@keyframes marquee {
-    from { transform: translateX(0%); }
-    to { transform: translateX(-50%); } /* Move exatamente a metade da largura total */
-}
-
-/* Ajustes nos cards para funcionarem dentro do marquee */
-.marquee-content .card {
-    width: 300px; /* Largura fixa para cada card */
-    margin: 0 15px; /* Espaçamento entre os cards */
-    flex-shrink: 0; /* Impede que os cards sejam espremidos */
-}
-
-/* --- Botão de Controle do Marquee --- */
-.marquee-control {
-    position: relative;
-    margin: 30px auto 0; /* Centraliza e dá espaço do topo */
-    background-color: var(--primary-color);
-    color: var(--white);
-    border: none;
-    border-radius: 50%;
-    width: 45px;
-    height: 45px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    transition: all 0.3s ease;
-    opacity: 0.9;
-}
-
-.marquee-control:hover {
-    background-color: var(--primary-dark);
-    transform: scale(1.1);
-    opacity: 1;
-}
-
-/* Classe para pausar via JS */
-.marquee-content.paused {
-    animation-play-state: paused !important;
-}
-
-/* --- Seção de Depoimentos --- */
-.testimonials {
-    background-color: var(--bg-light); 
-}
-
-/* Novo container que usa Flexbox para alinhar setas e carrossel */
-.testimonial-layout {
-    display: flex;
-    align-items: center; /* Centraliza as setas verticalmente com os slides */
-    gap: 10px; /* Pequeno espaço entre as setas e o carrossel */
-}
-
-/* O carrossel principal */
-.testimonial-swiper {
-    flex-grow: 1; /* Faz o carrossel ocupar todo o espaço disponível */
-    /* CORREÇÃO CRÍTICA: Impede que o Swiper quebre o layout flex ao encolher.
-       Sem isso, o carrossel não respeita os limites do contêiner pai. */
-    min-width: 0;
-}
-
-.swiper-slide {
-    height: auto;
-    display: flex;
-    justify-content: center;
-}
-
-.testimonial-card {
-    background-color: var(--white);
-    padding: 40px 30px;
-    border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-    position: relative;
-    transition: transform 0.3s ease, border-color 0.3s ease;
-    border: 1px solid transparent;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.testimonial-card:hover {
-    transform: translateY(-5px);
-    border-color: var(--accent-color);
-}
-
-.quote-icon {
-    font-family: 'Playfair Display', serif;
-    font-size: 4rem;
-    color: var(--accent-color);
-    line-height: 0.5;
-    margin-bottom: 20px;
-    opacity: 0.5;
-}
-
-.testimonial-card p {
-    font-style: italic;
-    color: var(--text-color);
-    margin-bottom: 20px;
-    font-size: 1.05rem;
-}
-
-.author {
-    font-weight: bold;
-    color: var(--primary-dark);
-    text-transform: uppercase;
-    font-size: 0.85rem;
-    letter-spacing: 1px;
-}
-
-/* --- Estilos para Controles do Swiper (Abordagem Flexbox) --- */
-
-/* As setas agora são elementos flex, então resetamos o posicionamento absoluto */
-.testimonial-layout .swiper-button-prev,
-.testimonial-layout .swiper-button-next {
-    position: static; /* A MÁGICA: Faz as setas se comportarem como blocos normais */
-    width: auto;
-    height: auto;
-    margin: 0;
-    color: var(--primary-color);
-    transition: transform 0.2s ease;
-}
-
-.testimonial-layout .swiper-button-prev:hover,
-.testimonial-layout .swiper-button-next:hover {
-    transform: scale(1.1);
-}
-
-/* Paginação (Bolinhas) - posicionada abaixo do carrossel */
-.swiper-pagination {
-    position: static;
-    margin-top: 30px; /* Espaço entre o carrossel e as bolinhas */
-}
-
-.swiper-pagination-bullet {
-    background-color: var(--accent-color);
-    background-color: var(--accent-color) !important;
-    width: 10px;
-    height: 10px;
-    opacity: 0.7;
-}
-
-.swiper-pagination-bullet-active {
-    background-color: var(--primary-color);
-    background-color: var(--primary-color) !important;
-    opacity: 1;
-}
-
-/* --- FAQ --- */
-
-
-/* --- FAQ Suave (Accordion Style) --- */
-
-.faq {
-    background-color: var(--white);
-}
-
-.faq-grid {
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-/* O container de cada pergunta */
-.faq-item {
-    border-bottom: 1px solid #e0e0e0; /* Linha divisória fina */
-}
-
-/* A Pergunta (Clicável) */
-.faq-question {
-    padding: 25px 10px;
-    font-weight: 700;
-    color: var(--text-color);
-    font-size: 1.1rem;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: color 0.3s;
-}
-
-.faq-question:hover {
-    color: var(--primary-dark);
-}
-
-/* A Resposta (Escondida inicialmente) */
-.faq-answer {
-    max-height: 0; /* Altura zero = escondido */
-    overflow: hidden; /* Esconde o que passar da altura */
-    transition: max-height 0.4s ease-out; /* A mágica da suavidade */
-}
-
-.faq-answer p {
-    padding: 0 10px 25px 10px; /* Espaço do texto */
-    color: var(--text-light);
-    line-height: 1.7;
-}
-
-/* --- Estilo da Seta (Arrow) --- */
-.arrow {
-    width: 8px;
-    height: 8px;
-    border-right: 2px solid var(--primary-color);
-    border-bottom: 2px solid var(--primary-color);
-    transform: rotate(45deg); /* Posição inicial (seta pra baixo) */
-    transition: transform 0.3s ease;
-    margin-right: 10px;
-}
-
-/* --- Quando o item estiver ATIVO (Aberto) --- */
-
-.faq-item.active .arrow {
-    transform: rotate(225deg); /* Gira a seta pra cima */
-}
-
-.faq-item.active .faq-question {
-    color: var(--primary-dark);
-}
-
-
-
-/* --- Mensagem Motivacional --- */
-
-.quote {
-    background-color: rgba(126, 102, 175, 0.1); /* Fundo lavanda bem suave e transparente */
-    color: var(--primary-dark); /* Texto escuro para leitura */
-    text-align: center;
-    padding: 40px 0; /* Reduz a altura da seção */
-}
-
-.quote .container {
-    border-left: 1px solid var(--primary-color);
-    border-right: 1px solid var(--primary-color);
-    max-width: 800px; /* Deixa o bloco mais compacto e elegante */
-}
-
-.quote blockquote {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.8rem;
-    font-style: italic;
-    margin-bottom: 10px;
-}
-
-/* --- Entre em Contato (Agendar Consulta) --- */
-
-
-
-                /* --- Seção Contato & Localização (Ajustado e Compacto) --- */
-
-.contact-grid {
+/* ==========================================================================
+   Contact Section
+   ========================================================================== */
+.contact-box {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* Divide a tela no meio */
-    gap: 60px;
-    align-items: start; /* Alinha tudo no topo */
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    padding: 60px;
+    border: 1px solid rgba(250, 165, 54, 0.2);
 }
 
-                /* Títulos (H2) */
-.contact-info h2,
-.contact-content h2 {
-    margin-bottom: 15px; /* Espaço pequeno abaixo do título */
-    color: var(--primary-dark); /* Garante a cor padrão do site */
+.contact-info h2 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
 }
 
-                /* Texto Introdutório ("Estou à disposição...") */
-.contact-intro {
-    color: var(--text-color);
-    margin-bottom: 25px; /* Reduzi o espaço antes da lista */
-    font-size: 1rem; /* Tamanho padrão do corpo do site */
+.contact-info h2 span {
+    color: var(--color-secondary);
 }
 
-                /* --- Lista de Contatos (Lado Esquerdo) --- */
-.contact-list {
+.contact-info p {
+    color: var(--color-text-muted);
+    margin-bottom: 40px;
+    font-size: 1.1rem;
+}
+
+.contact-details {
     display: flex;
     flex-direction: column;
-    gap: 15px; /* Espaço menor entre cada item da lista (antes era 20px) */
-    margin-bottom: 30px; /* Espaço entre a lista e o botão */
+    gap: 20px;
 }
 
-.contact-list li a {
+.detail-item {
     display: flex;
     align-items: center;
-    gap: 15px;
-    font-size: 1rem; /* Tamanho consistente com o site */
-    color: var(--text-color);
-    padding: 5px 0; /* Padding menor para aproximar os itens */
-    transition: 0.3s;
+    gap: 16px;
+    font-size: 1.1rem;
 }
 
-.contact-list li a:hover {
-    transform: translateX(5px);
-    color: var(--primary-dark);
-}
-
-                /* O Círculo do Ícone */
-.icon-circle {
-    width: 40px; /* Levemente menor para ficar mais delicado */
+.detail-item i {
+    width: 40px;
     height: 40px;
-    background-color: rgba(126, 102, 175, 0.1); /* Fundo lavanda bem clarinho */
+    background: rgba(214, 222, 237, 0.1);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--primary-color);
-    transition: 0.3s;
-    flex-shrink: 0; /* Garante que a bolinha não amasse se o texto for grande */
+    color: var(--color-primary);
+    border: 1px solid rgba(214, 222, 237, 0.2);
 }
 
-.contact-list li a:hover .icon-circle {
-    background-color: var(--primary-color);
-    color: var(--white);
-}
-
-                /* --- Botão "Agende Agora" (Estilo Pílula) --- */
-.btn-wide {
-    display: inline-block; /* Comporta-se como botão padrão */
-    width: 100%; /* Ocupa a largura da coluna esquerda */
-    text-align: center;
-    padding: 14px 0;
-    font-size: 1.1rem;
-    border-radius: 50px;
-    box-shadow: 0 4px 10px rgba(126, 102, 175, 0.3); /* Sombra lavanda */
-    margin-top: 10px; /* Pequeno ajuste fino */
-}
-
-                /* --- Lado Direito (Endereço e Mapa) --- */
-.location-clean {
-    margin-top: 0; /* Remove margem extra no topo */
-}
-
-.address-simple {
-    font-size: 1rem;
-    color: var(--text-color);
-    margin-bottom: 20px;
-    line-height: 1.6;
-    padding-left: 15px;
-    border-left: 3px solid var(--primary-color); /* Linha verde lateral para destaque */
-}
-
-.map-frame {
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.08); /* Sombra mais suave */
-    border: 4px solid var(--white);
-    transition: transform 0.3s ease;
-}
-
-.map-frame:hover {
-    transform: translateY(-3px);
-}
-
-/* --- Menu Hamburger --- */
-.menu-hamburger {
-    display: none; /* Escondido por padrão em telas grandes */
+.contact-form {
+    display: flex;
     flex-direction: column;
-    justify-content: space-around;
-    width: 30px;
-    height: 25px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    z-index: 1010; /* Acima do menu para ser clicável */
+    gap: 24px;
 }
 
-.menu-hamburger span {
+.input-group {
+    position: relative;
+}
+
+.input-group input,
+.input-group textarea {
     width: 100%;
-    height: 3px;
-    background-color: var(--primary-dark);
-    border-radius: 5px;
-    transition: all 0.3s ease-in-out;
-    transform-origin: center;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 16px;
+    border-radius: 8px;
+    color: var(--color-text-main);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    outline: none;
 }
 
-/* --- Animação de Fade-in ao Rolar --- */
-.reveal-on-scroll {
-    opacity: 0;
-    transform: translateY(30px); /* Começa um pouco abaixo para um efeito de subida */
-    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+.input-group textarea {
+    resize: vertical;
+    min-height: 120px;
 }
 
-.reveal-on-scroll.is-visible {
-    opacity: 1;
-    transform: translateY(0);
+.input-group input:focus,
+.input-group textarea:focus {
+    border-color: rgba(250, 165, 54, 0.5);
+    background: rgba(0, 0, 0, 0.4);
 }
 
-/* --- Animações --- */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
+.input-border {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0%;
+    height: 2px;
+    background: var(--color-secondary);
+    transition: width 0.3s ease;
+    box-shadow: var(--glow-secondary);
 }
 
-/* --- Rodapé --- */
+.input-group input:focus~.input-border,
+.input-group textarea:focus~.input-border {
+    width: 100%;
+}
+
+.btn-block {
+    width: 100%;
+    font-size: 1.1rem;
+    gap: 10px;
+}
+
+/* ==========================================================================
+   Footer
+   ========================================================================== */
 footer {
-    background-color: var(--primary-dark);
-    color: var(--white);
-    text-align: center;
-    padding: 20px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 40px 0;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.footer-social {
+    display: flex;
+    gap: 16px;
+}
+
+.footer-social a {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(17, 63, 127, 0.2); /* Fundo com Azul oficial da logo */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.footer-social a:hover {
+    background: rgba(214, 222, 237, 0.1);
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+    transform: translateY(-3px);
+    box-shadow: var(--glow-primary);
+}
+
+.copyright {
+    color: var(--color-text-muted);
     font-size: 0.9rem;
-}
-
-
-/* --- Responsividade Geral (Mobile First) --- */
-@media (max-width: 768px) {
-    /* Reduz a escala da fonte globalmente para mobile (aprox. 14.5px) */
-    html { font-size: 90%; }
-
-    .mobile-break { display: inline; } /* Ativa a quebra de linha no mobile */
-
-    /* Cabeçalho mais translúcido no mobile */
-    .header {
-        background-color: rgba(255, 255, 255, 0.85); /* Transparência base */
-        -webkit-backdrop-filter: blur(10px);
-        backdrop-filter: blur(10px);
-    }
-    .header.scrolled {
-        background-color: rgba(255, 255, 255, 0.7); /* Mais transparente ao rolar */
-    }
-
-    /* Mostra o hamburger no mobile */
-    .menu-hamburger {
-        display: flex;
-    }
-
-    /* Animação do Hamburger para 'X' quando ativo */
-    .menu-hamburger.active span:nth-child(1) {
-        transform: translateY(8px) rotate(45deg);
-    }
-    .menu-hamburger.active span:nth-child(2) {
-        opacity: 0;
-    }
-    .menu-hamburger.active span:nth-child(3) {
-        transform: translateY(-8px) rotate(-45deg);
-    }
-
-    /* Esconde a navegação e a prepara para aparecer */
-    .nav-menu {
-        position: fixed;
-        top: 70px; /* Abaixo do header */
-        right: 0;
-        width: 80%;
-        max-width: 320px;
-        height: calc(100vh - 70px);
-        background-color: rgba(251, 250, 255, 0.95); /* Fundo translúcido (cor bg-light com transparência) */
-        -webkit-backdrop-filter: blur(10px); /* Efeito de vidro no menu mobile */
-        backdrop-filter: blur(10px);
-        box-shadow: -5px 0 15px rgba(0,0,0,0.1);
-        transform: translateX(100%); /* Começa fora da tela */
-        transition: transform 0.4s ease-in-out;
-        padding-top: 40px;
-        z-index: 999;
-    }
-
-    /* Quando o menu estiver ativo, ele entra na tela */
-    .nav-menu.active {
-        transform: translateX(0);
-    }
-
-    /* Ajusta a lista de links para o menu mobile */
-    .nav-menu .nav-list {
-        flex-direction: column;
-        align-items: center;
-        gap: 30px;
-    }
-
-    /* Ajustes de Tipografia e Espaçamento */
-    .hero h1 { font-size: 2.2rem; }
-    .section-title, .about-text h2 { font-size: 1.75rem; text-align: center; }
-    .section-padding { padding: 40px 0; }
-
-    /* Ajuste da Citação para manter as bordas visíveis e elegantes no mobile */
-    .quote .container { width: 85%; padding: 0 15px; }
-    .quote blockquote { font-size: 1.3rem; }
-
-    /* Ajuste do Hero para não cortar conteúdo em telas pequenas */
-    .hero {
-        background: linear-gradient(rgba(255,255,255,0.8), rgba(255,255,255,0.8)), url('img/banner_principal_celular.png');
-        background-size: cover;
-        background-position: center;
-        height: calc(100vh - 70px); /* Desconta a altura do header (70px) para caber exato */
-        padding: 0;    /* Remove espaçamento extra para centralizar perfeitamente */
-    }
-
-    .about-grid, .contact-grid { grid-template-columns: 1fr; gap: 30px; }
-    .about-image { order: -1; margin-bottom: 0; } /* Remove margem extra, usa apenas o gap */
-    .about-image img { box-shadow: 5px 5px 0px var(--accent-color); } /* Sombra menor */
-
-    /* Esconde as setas do carrossel para não espremer o conteúdo */
-    .testimonial-layout .swiper-button-prev,
-    .testimonial-layout .swiper-button-next {
-        display: none;
-    }
-
-    .contact-grid {
-        gap: 40px;
-    }
-    
-    .btn-wide {
-        width: 100%; /* No celular garante largura total */
-    }
-
-    .whatsapp-float {
-        bottom: 15px;
-        right: 15px;
-    }
-    .whatsapp-float img {
-        width: 50px;
-    }
-}
-                /* --- Botão WhatsApp Flutuante --- */
-
-.whatsapp-float {
-    position: fixed;
-    bottom: 20px;  /* Distância do rodapé */
-    right: 20px;   /* Distância da direita */
-    z-index: 1000; /* Garante que fique acima de tudo */
-    transition: transform 0.3s ease; /* Anima apenas o zoom, não a posição */
-}
-
-.whatsapp-float img {
-    width: 60px;   /* Tamanho do ícone */
-    height: auto;
-    filter: drop-shadow(0 4px 5px rgba(0,0,0,0.3)); /* Sombra para dar destaque */
-}
-
-.whatsapp-float:hover {
-    transform: scale(1.1); /* Aumenta levemente */
-}
-
-
-/* --- CORREÇÃO DE CORES E SEÇÕES (Efeito Zebra) --- */
-
-.section-title {
-    font-size: 2.5rem;
-    color: var(--primary-dark);
+    width: 100%;
     text-align: center;
-    margin-bottom: 50px; /* Devolve o espaçamento que parecia ter sumido */
+    margin-top: 20px;
 }
 
-/* 2. Seção Sobre Mim -> Fica BEGE (já é o padrão do body, mas garantimos) */
-#sobre { background-color: var(--bg-light); }
-
-/* 3. Seção Técnicas (Serviços) -> MUDAR PARA BRANCO */
-#servicos { background-color: var(--white); }
-
-/* Ajuste nos Cards para eles se destacarem no fundo branco */
-#servicos .card {
-    background-color: var(--white);
-    border: 1px solid #e0e0e0; /* Borda um pouco mais visível */
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+/* ==========================================================================
+   Animations & Scroll Reveal
+   ========================================================================== */
+.fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
 }
 
-/* 4. Seção Depoimentos -> MUDAR PARA BEGE */
-#depoimentos { background-color: var(--bg-light); }
+.reveal-up {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
 
-/* 5. Seção FAQ -> MUDAR PARA BRANCO */
-#faq { background-color: var(--white); }
+.reveal-left {
+    opacity: 0;
+    transform: translateX(-40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
 
-/* 6. Seção Contato -> MUDAR PARA BEGE */
-#contato { background-color: var(--bg-light); }
+.reveal-right {
+    opacity: 0;
+    transform: translateX(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
 
-/* Garante que todas as seções tenham respiro em cima e embaixo */
-section {
-    width: 100%;
-    display: block;
-}* Garante que todas as seções tenham respiro em cima e embaixo */
-section {
-    width: 100%;
-    display: block;
+.active.fade-in,
+.active.reveal-up,
+.active.reveal-left,
+.active.reveal-right {
+    opacity: 1;
+    transform: translate(0);
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+@media (max-width: 992px) {
+    .hero h1 {
+        font-size: 3.5rem;
+    }
+
+    .about-grid,
+    .contact-box {
+        grid-template-columns: 1fr;
+    }
+
+    .contact-box {
+        padding: 40px 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-links {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: rgba(3, 7, 18, 0.95);
+        backdrop-filter: blur(10px);
+        flex-direction: column;
+        padding: 30px 0;
+        gap: 20px;
+        clip-path: circle(0% at 100% 0);
+        transition: clip-path 0.4s ease;
+    }
+
+    .nav-links.active {
+        clip-path: circle(150% at 100% 0);
+    }
+
+    .mobile-menu-btn {
+        display: block;
+    }
+
+    .hero h1 {
+        font-size: 2.8rem;
+    }
+
+    .section {
+        padding: 60px 0;
+    }
+
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+    }
 }
