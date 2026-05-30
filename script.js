@@ -77,6 +77,101 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 100);
 
     // ==========================================================================
+    // News Slider (Drag & Buttons)
+    // ==========================================================================
+    const newsTrack = document.getElementById('news-track');
+    const newsPrev = document.getElementById('news-prev');
+    const newsNext = document.getElementById('news-next');
+
+    if (newsTrack) {
+        // Clone cards for infinite effect
+        const cards = Array.from(newsTrack.children);
+        cards.forEach(card => {
+            const clone = card.cloneNode(true);
+            newsTrack.appendChild(clone);
+        });
+
+        // Start from the middle (which is the beginning of the cloned set) to allow left scroll immediately
+        setTimeout(() => {
+            newsTrack.style.scrollBehavior = 'auto';
+            newsTrack.scrollLeft = newsTrack.scrollWidth / 2;
+            newsTrack.style.scrollBehavior = 'smooth';
+        }, 100);
+
+        // Button controls
+        const getCardWidth = () => {
+            const card = newsTrack.querySelector('.news-card');
+            const style = window.getComputedStyle(newsTrack);
+            const gap = parseFloat(style.gap) || 0;
+            return card.offsetWidth + gap;
+        };
+
+        newsPrev?.addEventListener('click', () => {
+            newsTrack.scrollBy({ left: -getCardWidth(), behavior: 'smooth' });
+        });
+
+        newsNext?.addEventListener('click', () => {
+            newsTrack.scrollBy({ left: getCardWidth(), behavior: 'smooth' });
+        });
+
+        // Mouse Drag to Scroll
+        let isDown = false;
+        let startX;
+        let scrollLeft;
+
+        newsTrack.addEventListener('mousedown', (e) => {
+            isDown = true;
+            newsTrack.style.cursor = 'grabbing';
+            newsTrack.style.scrollSnapType = 'none'; // disable snap during drag
+            newsTrack.style.scrollBehavior = 'auto'; // disable smooth scroll while dragging
+            startX = e.pageX - newsTrack.offsetLeft;
+            scrollLeft = newsTrack.scrollLeft;
+        });
+
+        newsTrack.addEventListener('mouseleave', () => {
+            if (!isDown) return;
+            isDown = false;
+            newsTrack.style.cursor = 'grab';
+            newsTrack.style.scrollSnapType = 'x mandatory';
+            newsTrack.style.scrollBehavior = 'smooth';
+        });
+
+        newsTrack.addEventListener('mouseup', () => {
+            if (!isDown) return;
+            isDown = false;
+            newsTrack.style.cursor = 'grab';
+            newsTrack.style.scrollSnapType = 'x mandatory';
+            newsTrack.style.scrollBehavior = 'smooth';
+        });
+
+        newsTrack.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - newsTrack.offsetLeft;
+            const walk = (x - startX) * 2; // scroll-fast multiplier
+            newsTrack.scrollLeft = scrollLeft - walk;
+        });
+
+        // Infinite Loop Logic
+        newsTrack.addEventListener('scroll', () => {
+            const maxScroll = newsTrack.scrollWidth / 2;
+            
+            // Allow a small buffer before jumping so it feels seamless
+            if (newsTrack.scrollLeft >= maxScroll + getCardWidth()) {
+                newsTrack.style.scrollBehavior = 'auto';
+                newsTrack.scrollLeft -= maxScroll;
+                if (isDown) scrollLeft -= maxScroll; // Update drag reference
+                newsTrack.style.scrollBehavior = 'smooth';
+            } else if (newsTrack.scrollLeft <= 0) {
+                newsTrack.style.scrollBehavior = 'auto';
+                newsTrack.scrollLeft += maxScroll;
+                if (isDown) scrollLeft += maxScroll; // Update drag reference
+                newsTrack.style.scrollBehavior = 'smooth';
+            }
+        });
+    }
+
+    // ==========================================================================
     // Particle Canvas Animation
     // ==========================================================================
     initParticleCanvas();
